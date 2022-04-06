@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import generics
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -46,7 +48,7 @@ class StartJourneyAPIView(generics.CreateAPIView):
 
 
 class StopJourneyAPIView(generics.UpdateAPIView):
-    serializer_class = serializers.JourneySerializer
+    queryset = models.Journey.objects
 
     def put(self, request, *args, **kwargs):
         repo = self.get_repository()
