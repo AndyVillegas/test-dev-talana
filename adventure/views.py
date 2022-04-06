@@ -48,6 +48,7 @@ class StartJourneyAPIView(generics.CreateAPIView):
 
 
 class StopJourneyAPIView(generics.UpdateAPIView):
+    serializer_class = serializers.EmptyJourneySerializer
     queryset = models.Journey.objects
 
     def put(self, request, *args, **kwargs):
