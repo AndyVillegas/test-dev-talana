@@ -12,12 +12,11 @@ from adventure import models, notifiers, repositories, serializers, usecases
 class CreateVehicleAPIView(APIView):
     def post(self, request: Request) -> Response:
         payload = request.data
-        vehicle_type = models.VehicleType.objects.get(name=payload["vehicle_type"])
-        vehicle = models.Vehicle.objects.create(
-            name=payload["name"],
-            passengers=payload["passengers"],
-            vehicle_type=vehicle_type,
+        repo = self.get_repository()
+        usecase = usecases.CreateVehicle(repo).set_params(
+            payload
         )
+        vehicle = usecase.execute()
         return Response(
             {
                 "id": vehicle.id,
@@ -27,6 +26,9 @@ class CreateVehicleAPIView(APIView):
             },
             status=201,
         )
+
+    def get_repository(self) -> repositories.JourneyRepository:
+        return repositories.JourneyRepository()
 
 
 class StartJourneyAPIView(generics.CreateAPIView):
@@ -51,11 +53,10 @@ class StopJourneyAPIView(generics.UpdateAPIView):
     serializer_class = serializers.EmptyJourneySerializer
     queryset = models.Journey.objects
 
-    def put(self, request, *args, **kwargs):
+    def perform_update(self, serializer):
         repo = self.get_repository()
         usecase = usecases.StopJourney(repo).set_params(self.get_object())
         usecase.execute()
-        return Response(status=200,)
 
     def get_repository(self) -> repositories.JourneyRepository:
         return repositories.JourneyRepository()

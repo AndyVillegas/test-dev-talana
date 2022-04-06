@@ -5,6 +5,24 @@ from .notifiers import Notifier
 from .repositories import JourneyRepository
 
 
+class CreateVehicle:
+    def __init__(self, repository: JourneyRepository):
+        self.repository = repository
+
+    def set_params(self, data: dict) -> CreateVehicle:
+        self.data = data
+        return self
+
+    def execute(self) -> models.Vehicle:
+        vehicle_type = models.VehicleType.objects.get(name=self.data["vehicle_type"])
+        vehicle = models.Vehicle.objects.create(
+            name=self.data["name"],
+            passengers=self.data["passengers"],
+            vehicle_type=vehicle_type,
+        )
+        return vehicle
+
+
 class StartJourney:
     def __init__(self, repository: JourneyRepository, notifier: Notifier):
         self.repository = repository
