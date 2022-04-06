@@ -1,31 +1,19 @@
-import datetime
 
 from rest_framework import generics
-from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
-from rest_framework.views import APIView
 
 from adventure import models, notifiers, repositories, serializers, usecases
 
 
-class CreateVehicleAPIView(APIView):
-    def post(self, request: Request) -> Response:
-        payload = request.data
+class CreateVehicleAPIView(generics.CreateAPIView):
+    serializer_class = serializers.VehicleSerializer
+
+    def perform_create(self, serializer):
         repo = self.get_repository()
         usecase = usecases.CreateVehicle(repo).set_params(
-            payload
+            serializer.validated_data
         )
-        vehicle = usecase.execute()
-        return Response(
-            {
-                "id": vehicle.id,
-                "name": vehicle.name,
-                "passengers": vehicle.passengers,
-                "vehicle_type": vehicle.vehicle_type.name,
-            },
-            status=201,
-        )
+        usecase.execute()
 
     def get_repository(self) -> repositories.JourneyRepository:
         return repositories.JourneyRepository()

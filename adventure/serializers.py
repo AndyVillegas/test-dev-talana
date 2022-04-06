@@ -8,3 +8,9 @@ class JourneySerializer(serializers.Serializer):
 
 class EmptyJourneySerializer(serializers.Serializer):
     pass
+
+
+class VehicleSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    passengers = serializers.IntegerField()
+    vehicle_type = serializers.CharField()

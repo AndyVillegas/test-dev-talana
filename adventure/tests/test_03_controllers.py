@@ -90,5 +90,4 @@ class TestStopJourneyAPIView:
             ),
         )
         response = client.put("/api/adventure/stop/1")
-        print(response)
         assert response.status_code == 200
