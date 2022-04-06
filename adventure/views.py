@@ -1,5 +1,6 @@
 
 from rest_framework import generics
+from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 from adventure import models, notifiers, repositories, serializers, usecases
@@ -45,6 +46,13 @@ class StopJourneyAPIView(generics.UpdateAPIView):
         repo = self.get_repository()
         usecase = usecases.StopJourney(repo).set_params(self.get_object())
         usecase.execute()
+
+    def update(self, request, *args, **kwargs):
+        super().update(request, *args, **kwargs)
+        journey = self.get_object()
+        return Response({
+            "end": journey.end
+        }, status=200)
 
     def get_repository(self) -> repositories.JourneyRepository:
         return repositories.JourneyRepository()
